@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNC Mascot Game - UNC Chapel Hill Marketplace</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 80px);
+            background-color: #f8f9fa;
+            padding: 40px 20px;
+        }
+
+        .game-canvas {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .game-controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .game-score {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .game-instructions {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .game-instructions p {
+            margin-bottom: 10px;
+        }
+
+        .start-button {
+            background-color: #4B9CD3;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 6px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .start-button:hover {
+            background-color: #3a7ba3;
+        }
+
+        .game-over {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .game-over h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .game-over button {
+            background-color: #4B9CD3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .game-over button:hover {
+            background-color: #3a7ba3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <h1>UNC Marketplace</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="listings.html">Listings</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="signup.html" class="signup-btn">Sign Up</a></li>
+                <li><button class="search-btn" onclick="showPlaceholderAlert('Search')"><i class="fas fa-search"></i></button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Game Section -->
+    <section class="game-container">
+        <div class="game-instructions">
+            <h2>Rameses Jump Game</h2>
+            <p>Help Rameses jump over obstacles! Press SPACE or UP ARROW to jump.</p>
+            <p>Try to get the highest score possible!</p>
+        </div>
+        <div class="game-score">Score: <span id="score">0</span></div>
+        <canvas id="gameCanvas" class="game-canvas" width="800" height="300"></canvas>
+        <button class="start-button" onclick="startGame()">Start Game</button>
+        <div class="game-over" id="gameOver">
+            <h2>Game Over!</h2>
+            <p>Your score: <span id="finalScore">0</span></p>
+            <button onclick="restartGame()">Play Again</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Us</h3>
+                <p>Connecting Carolina students through a sustainable marketplace.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="#privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 UNC Chapel Hill Marketplace. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Game variables
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const finalScoreElement = document.getElementById('finalScore');
+        const gameOverElement = document.getElementById('gameOver');
+
+        // Game objects
+        const rameses = {
+            x: 50,
+            y: canvas.height - 50,
+            width: 40,
+            height: 40,
+            jumping: false,
+            jumpForce: 0,
+            gravity: 0.5,
+            maxJumpForce: -15
+        };
+
+        const obstacles = [];
+        let score = 0;
+        let gameSpeed = 5;
+        let gameRunning = false;
+        let animationId;
+
+        // Game functions
+        function startGame() {
+            if (!gameRunning) {
+                gameRunning = true;
+                score = 0;
+                obstacles.length = 0;
+                gameSpeed = 5;
+                updateScore();
+                gameOverElement.style.display = 'none';
+                animate();
+            }
+        }
+
+        function restartGame() {
+            gameOverElement.style.display = 'none';
+            startGame();
+        }
+
+        function updateScore() {
+            scoreElement.textContent = score;
+            finalScoreElement.textContent = score;
+        }
+
+        function createObstacle() {
+            if (Math.random() < 0.02) {
+                obstacles.push({
+                    x: canvas.width,
+                    y: canvas.height - 30,
+                    width: 20,
+                    height: 30
+                });
+            }
+        }
+
+        function updateObstacles() {
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].x -= gameSpeed;
+                
+                if (obstacles[i].x + obstacles[i].width < 0) {
+                    obstacles.splice(i, 1);
+                    score++;
+                    updateScore();
+                    if (score % 5 === 0) {
+                        gameSpeed += 0.5;
+                    }
+                }
+            }
+        }
+
+        function checkCollision() {
+            for (const obstacle of obstacles) {
+                if (
+                    rameses.x < obstacle.x + obstacle.width &&
+                    rameses.x + rameses.width > obstacle.x &&
+                    rameses.y < obstacle.y + obstacle.height &&
+                    rameses.y + rameses.height > obstacle.y
+                ) {
+                    gameOver();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            gameOverElement.style.display = 'block';
+        }
+
+        function jump() {
+            if (!rameses.jumping) {
+                rameses.jumping = true;
+                rameses.jumpForce = rameses.maxJumpForce;
+            }
+        }
+
+        function updateRameses() {
+            if (rameses.jumping) {
+                rameses.y += rameses.jumpForce;
+                rameses.jumpForce += rameses.gravity;
+
+                if (rameses.y > canvas.height - 50) {
+                    rameses.y = canvas.height - 50;
+                    rameses.jumping = false;
+                }
+            }
+        }
+
+        function drawRameses() {
+            // Draw Rameses body
+            ctx.fillStyle = '#4B9CD3';
+            ctx.fillRect(rameses.x, rameses.y, rameses.width, rameses.height);
+            
+            // Draw Rameses head
+            ctx.beginPath();
+            ctx.arc(rameses.x + rameses.width/2, rameses.y - 10, 15, 0, Math.PI * 2);
+            ctx.fillStyle = '#4B9CD3';
+            ctx.fill();
+            
+            // Draw Rameses horns
+            ctx.beginPath();
+            ctx.moveTo(rameses.x + rameses.width/2 - 10, rameses.y - 20);
+            ctx.lineTo(rameses.x + rameses.width/2 - 5, rameses.y - 30);
+            ctx.lineTo(rameses.x + rameses.width/2, rameses.y - 20);
+            ctx.fillStyle = '#4B9CD3';
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(rameses.x + rameses.width/2, rameses.y - 20);
+            ctx.lineTo(rameses.x + rameses.width/2 + 5, rameses.y - 30);
+            ctx.lineTo(rameses.x + rameses.width/2 + 10, rameses.y - 20);
+            ctx.fillStyle = '#4B9CD3';
+            ctx.fill();
+            
+            // Draw Rameses face
+            ctx.beginPath();
+            ctx.arc(rameses.x + rameses.width/2 - 5, rameses.y - 15, 3, 0, Math.PI * 2);
+            ctx.arc(rameses.x + rameses.width/2 + 5, rameses.y - 15, 3, 0, Math.PI * 2);
+            ctx.fillStyle = 'white';
+            ctx.fill();
+        }
+
+        function drawObstacle(obstacle) {
+            // Draw obstacle (Duke Blue Devil)
+            ctx.fillStyle = '#001A57'; // Duke blue
+            ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+            
+            // Draw devil horns
+            ctx.beginPath();
+            ctx.moveTo(obstacle.x + 5, obstacle.y);
+            ctx.lineTo(obstacle.x, obstacle.y - 10);
+            ctx.lineTo(obstacle.x + 10, obstacle.y);
+            ctx.fillStyle = '#001A57';
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(obstacle.x + obstacle.width - 5, obstacle.y);
+            ctx.lineTo(obstacle.x + obstacle.width, obstacle.y - 10);
+            ctx.lineTo(obstacle.x + obstacle.width - 10, obstacle.y);
+            ctx.fillStyle = '#001A57';
+            ctx.fill();
+        }
+
+        function draw() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw ground
+            ctx.fillStyle = '#4B9CD3';
+            ctx.fillRect(0, canvas.height - 10, canvas.width, 10);
+
+            // Draw Rameses
+            drawRameses();
+
+            // Draw obstacles
+            for (const obstacle of obstacles) {
+                drawObstacle(obstacle);
+            }
+        }
+
+        function animate() {
+            if (gameRunning) {
+                updateRameses();
+                createObstacle();
+                updateObstacles();
+                checkCollision();
+                draw();
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            if ((e.code === 'Space' || e.code === 'ArrowUp') && gameRunning) {
+                jump();
+            }
+        });
+
+        // Touch support for mobile
+        canvas.addEventListener('touchstart', () => {
+            if (gameRunning) {
+                jump();
+            }
+        });
+    </script>
+</body>
+</html> 

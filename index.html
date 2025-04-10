@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNC Chapel Hill Marketplace</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <a href="index.html" style="text-decoration: none; color: inherit;">
+                <h1>UNC Marketplace</h1>
+            </a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="listings.html">Listings</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="signup.html" class="signup-btn">Sign Up</a></li>
+                <li><button class="search-btn"><i class="fas fa-search"></i></button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Tar Heel Marketplace</h1>
+            <p class="hero-subtitle">Connecting Carolina students through sustainable exchange</p>
+            <div class="hero-cta">
+                <a href="listings.html" class="cta-button">Browse Listings</a>
+                <a href="#" onclick="showPlaceholderAlert('Create Listing')" class="cta-button secondary">Create Listing</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Listings -->
+    <section class="featured-listings">
+        <h2>Featured Listings</h2>
+        <div class="listings-grid">
+            <!-- Listing Card 1 -->
+            <div class="listing-card">
+                <div class="card-image">
+                    <img src="jersey.jpg" alt="UNC Basketball Jersey">
+                </div>
+                <div class="card-content">
+                    <h3>UNC Basketball Jersey</h3>
+                    <p>Authentic UNC basketball jersey, perfect for game days at the Dean Dome.</p>
+                    <div class="card-meta">
+                        <span class="category">Apparel</span>
+                        <span class="location">Dean Dome</span>
+                    </div>
+                    <button onclick="showPlaceholderAlert('Request Exchange')">Request Exchange</button>
+                </div>
+            </div>
+
+            <!-- Listing Card 2 -->
+            <div class="listing-card">
+                <div class="card-image">
+                    <img src="textbook.jpg" alt="UNC Textbook">
+                </div>
+                <div class="card-content">
+                    <h3>Textbook: UNC History</h3>
+                    <p>Learn about the rich history of UNC Chapel Hill.</p>
+                    <div class="card-meta">
+                        <span class="category">Books</span>
+                        <span class="location">Wilson Library</span>
+                    </div>
+                    <button onclick="showPlaceholderAlert('Request Exchange')">Request Exchange</button>
+                </div>
+            </div>
+
+            <!-- Listing Card 3 -->
+            <div class="listing-card">
+                <div class="card-image">
+                    <img src="newscooter.jpg" alt="Campus Scooter">
+                </div>
+                <div class="card-content">
+                    <h3>Electric Scooter - Perfect for Campus</h3>
+                    <p>Great for getting around campus and Chapel Hill quickly.</p>
+                    <div class="card-meta">
+                        <span class="category">Transportation</span>
+                        <span class="location">South Campus</span>
+                    </div>
+                    <button onclick="showPlaceholderAlert('Request Exchange')">Request Exchange</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quote Section -->
+    <section class="quote-section">
+        <div class="quote-container">
+            <p class="quote">"I've missed more than 9000 shots in my career. I've lost almost 300 games. 26 times, I've been trusted to take the game winning shot and missed. I've failed over and over and over again in my life. And that is why I succeed."</p>
+            <p class="quote-author">- Michael Jordan, UNC Class of 1986</p>
+        </div>
+    </section>
+
+    <!-- Game Section -->
+    <section class="game-section">
+        <div class="game-container">
+            <div class="game-instructions">
+                <h2>Rameses Jump Game</h2>
+                <p>Take a break and help Rameses jump over obstacles! Press SPACE or UP ARROW to jump.</p>
+                <p>Try to get the highest score possible!</p>
+            </div>
+            <div class="game-score">Score: <span id="score">0</span></div>
+            <canvas id="gameCanvas" class="game-canvas" width="800" height="300"></canvas>
+            <button class="start-button" onclick="startGame()">Start Game</button>
+            <div class="game-over" id="gameOver">
+                <h2>Game Over!</h2>
+                <p>Your score: <span id="finalScore">0</span></p>
+                <button onclick="restartGame()">Play Again</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Us</h3>
+                <p>Connecting Carolina students through a sustainable marketplace.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 UNC Chapel Hill Marketplace. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html> 
